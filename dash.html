@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chart.js للمخططات البيانية -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #00f2fe;
+      --secondary: #4facfe;
+      --bg-dark: #090d16;
+      --card-bg: rgba(18, 26, 43, 0.65);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* خلفية متدرجة مضيئة */
+    .bg-glowing-shapes {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .shape {
+      position: absolute;
+      filter: blur(120px);
+      border-radius: 50%;
+      opacity: 0.35;
+    }
+
+    .shape-1 { width: 400px; height: 400px; background: #00f2fe; top: -100px; right: -100px; }
+    .shape-2 { width: 500px; height: 500px; background: #7f00ff; bottom: -150px; left: -150px; }
+
+    /* القائمة الجانبية (Sidebar) */
+    .sidebar {
+      width: 260px;
+      background: rgba(13, 19, 33, 0.8);
+      backdrop-filter: blur(20px);
+      border-left: 1px solid var(--border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      min-height: 100vh;
+    }
+
+    .sidebar-brand {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 40px;
+      padding: 0 12px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item.active a, .nav-item a:hover {
+      background: rgba(0, 242, 254, 0.1);
+      color: var(--primary);
+    }
+
+    /* المحتوى الرئيسي */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      z-index: 1;
+      overflow-y: auto;
+    }
+
+    /* الشريط العلوي (Header) */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .header-title h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 50px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #040914;
+      font-weight: bold;
+    }
+
+    /* شبكة بطاقات الإحصائيات */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-info h3 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-info .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0, 242, 254, 0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* قسم الرسم البياني والجدول */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    /* جدول أحدث العمليات */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+    }
+
+    .data-table th, .data-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .data-table th {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-badge.completed { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .status-badge.pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .status-badge.failed { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+    @media (max-width: 992px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .sidebar { width: 80px; padding: 24px 8px; }
+      .sidebar span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glowing-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+
+  <!-- الشريط الجانبي -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span>النظام</span>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active">
+        <a href="#">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>الرئيسية</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>المستخدمين</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>المبيعات</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>الإعدادات</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- الجزء الرئيسي -->
+  <main class="main-content">
+    <header class="header">
+      <div class="header-title">
+        <h1>لوحة الإحصائيات</h1>
+        <p>نظرة عامة على أداء النظام اليوم</p>
+      </div>
+
+      <div class="user-profile">
+        <div class="avatar">A</div>
+        <span style="font-size: 0.9rem; font-weight: 500;">أحمد محمد</span>
+      </div>
+    </header>
+
+    <!-- البطاقات الإحصائية -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>إجمالي الإيرادات</h3>
+          <div class="value">$24,500</div>
+        </div>
+        <div class="stat-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>الطلبات الجديدة</h3>
+          <div class="value">+1,240</div>
+        </div>
+        <div class="stat-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>المستخدمون النشطون</h3>
+          <div class="value">8,420</div>
+        </div>
+        <div class="stat-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>معدل التحويل</h3>
+          <div class="value">3.2%</div>
+        </div>
+        <div class="stat-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- الرسم البياني وقسم البيانات -->
+    <div class="content-grid">
+      <!-- الرسم البياني -->
+      <div class="card">
+        <div class="card-title">إحصائيات المبيعات الشهرية</div>
+        <canvas id="salesChart" height="130"></canvas>
+      </div>
+
+      <!-- آخر الأنشطة / العمليات -->
+      <div class="card">
+        <div class="card-title">أحدث العمليات</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>العميل</th>
+              <th>المبلغ</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>محمد علي</td>
+              <td>$150.00</td>
+              <td><span class="status-badge completed">مكتمل</span></td>
+            </tr>
+            <tr>
+              <td>سارة خالد</td>
+              <td>$280.50</td>
+              <td><span class="status-badge pending">معلق</span></td>
+            </tr>
+            <tr>
+              <td>عمر حسام</td>
+              <td>$95.00</td>
+              <td><span class="status-badge completed">مكتمل</span></td>
+            </tr>
+            <tr>
+              <td>ريما خليل</td>
+              <td>$410.00</td>
+              <td><span class="status-badge failed">ملغى</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // إعداد الرسم البياني باستخدام Chart.js
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    
+    // تدرج لوني للرسم البياني
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(0, 242, 254, 0.4)');
+    gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+        datasets: [{
+          label: 'المبيعات ($)',
+          data: [12000, 19000, 15000, 25000, 22000, 30000],
+          borderColor: '#00f2fe',
+          borderWidth: 3,
+          fill: true,
+          backgroundColor: gradient,
+          tension: 0.4,
+          pointBackgroundColor: '#00f2fe'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#94a3b8' }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#94a3b8' }
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
