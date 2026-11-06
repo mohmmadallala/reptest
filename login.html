@@ -3,159 +3,364 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحة تسجيل الدخول التجريبية</title>
+  <title>تسجيل الدخول</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #00f2fe;
+      --secondary: #4facfe;
+      --sanad-red: #e11d48;
+      --sanad-glow: rgba(225, 29, 72, 0.25);
+      --bg-dark: #090d16;
+      --card-bg: rgba(18, 26, 43, 0.65);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.1);
+      --error: #ef4444;
+      --success: #10b981;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Tajawal', sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      height: 100vh;
+      background-color: var(--bg-dark);
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #f8fafc;
+      overflow: hidden;
+      position: relative;
     }
 
-    .login-card {
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 40px;
+    /* خلفية متدرجة مع أشكال مضيئة متحركة */
+    .bg-glowing-shapes {
+      position: absolute;
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      overflow: hidden;
     }
 
-    .login-card h2 {
+    .shape {
+      position: absolute;
+      filter: blur(90px);
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: float 10s infinite alternate ease-in-out;
+    }
+
+    .shape-1 { width: 320px; height: 320px; background: #00f2fe; top: -50px; right: -50px; }
+    .shape-2 { width: 380px; height: 380px; background: #7f00ff; bottom: -80px; left: -80px; animation-delay: -5s; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 40px) scale(1.1); }
+    }
+
+    /* كارت تسجيل الدخول */
+    .login-container {
+      position: relative;
+      z-index: 1;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-header {
       text-align: center;
       margin-bottom: 24px;
-      color: #38bdf8;
-      font-size: 1.8rem;
     }
 
-    .input-group {
+    .login-header h2 {
+      color: var(--text-main);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .login-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* زر تسجيل الدخول بواسطة سند */
+    .btn-sanad {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(225, 29, 72, 0.12);
+      border: 1px solid rgba(225, 29, 72, 0.4);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      margin-bottom: 24px;
+    }
+
+    .btn-sanad:hover {
+      background: rgba(225, 29, 72, 0.25);
+      border-color: var(--sanad-red);
+      box-shadow: 0 0 20px var(--sanad-glow);
+      transform: translateY(-1px);
+    }
+
+    .sanad-badge {
+      background: var(--sanad-red);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    /* فاصل النص */
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .divider span {
+      padding: 0 12px;
+    }
+
+    .form-group {
       margin-bottom: 20px;
     }
 
-    .input-group label {
+    .form-group label {
       display: block;
       margin-bottom: 8px;
-      font-size: 0.9rem;
-      color: #94a3b8;
+      font-size: 0.88rem;
+      color: var(--text-muted);
     }
 
-    .input-group input {
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
       width: 100%;
       padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #fff;
-      font-size: 1rem;
+      background: rgba(10, 15, 28, 0.7);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: all 0.3s ease;
     }
 
-    .input-group input:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    .input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
     }
 
     .btn-submit {
       width: 100%;
-      padding: 12px;
-      background: #0284c7;
-      color: #fff;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
+      color: #040914;
       font-size: 1rem;
-      font-weight: bold;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.3s ease;
     }
 
     .btn-submit:hover {
-      background: #0369a1;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 242, 254, 0.3);
     }
 
-    .alert {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 0.9rem;
+    /* النافذة المنبثقة لمكالمة سند (Sanad Modal Simulation) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 9, 20, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
       display: none;
+      align-items: center;
+      justify-content: center;
     }
 
-    .alert.success {
-      background: rgba(34, 197, 94, 0.15);
-      border: 1px solid #22c55e;
-      color: #4ade80;
+    .modal-card {
+      background: rgba(18, 26, 43, 0.95);
+      border: 1px solid var(--sanad-red);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 30px var(--sanad-glow);
     }
 
-    .alert.error {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid #ef4444;
-      color: #f87171;
+    .modal-card h3 {
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .modal-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .national-id-input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(10, 15, 28, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <div class="login-card">
-    <h2>تسجيل الدخول</h2>
-    
+  <div class="bg-glowing-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-header">
+      <h2>مرحباً بك</h2>
+      <p>اختر طريقة تسجيل الدخول المناسبة</p>
+    </div>
+
+    <!-- خيار الدخول الرقمي عبر سند -->
+    <button type="button" class="btn-sanad" id="sanadBtn">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+      <span>الدخول باستخدام تطبيق <strong>سند</strong></span>
+      <span class="sanad-badge">SANAD</span>
+    </button>
+
+    <div class="divider">
+      <span>أو بالبريد الإلكتروني</span>
+    </div>
+
     <form id="loginForm">
-      <div class="input-group">
-        <label for="username">اسم المستخدم</label>
-        <input type="text" id="username" placeholder="أدخل اسم المستخدم..." autocomplete="off">
+      <div class="form-group">
+        <label for="username">اسم المستخدم / الرقم الوطني</label>
+        <div class="input-wrapper">
+          <input type="text" id="username" placeholder="أدخل اسم المستخدم...">
+        </div>
       </div>
 
-      <div class="input-group">
+      <div class="form-group">
         <label for="password">كلمة المرور</label>
-        <input type="password" id="password" placeholder="أدخل كلمة المرور...">
+        <div class="input-wrapper">
+          <input type="password" id="password" placeholder="أدخل كلمة المرور...">
+        </div>
       </div>
 
-      <button type="submit" class="btn-submit">دخول</button>
+      <button type="submit" class="btn-submit">تسجيل الدخول</button>
     </form>
+  </div>
 
-    <div id="alertBox" class="alert"></div>
+  <!-- النافذة المنبثقة للتأكيد عبر سند -->
+  <div class="modal-overlay" id="sanadModal">
+    <div class="modal-card">
+      <h3>التصديق الرقمي - سند</h3>
+      <p>يرجى إدخال الرقم الوطني لإرسال طلب الموافقة إلى تطبيق سند على هاتفك:</p>
+      
+      <input type="text" class="national-id-input" id="nationalId" placeholder="9XXXXXXXX" maxlength="10">
+      
+      <button class="btn-submit" id="sendSanadReq" style="background: linear-gradient(135deg, #f43f5e, #e11d48); color: #fff;">
+        إرسال طلب التأكيد
+      </button>
+
+      <br>
+      <button class="btn-close-modal" id="closeModal">إلغاء</button>
+    </div>
   </div>
 
   <script>
-    const loginForm = document.getElementById('loginForm');
-    const alertBox = document.getElementById('alertBox');
+    const sanadBtn = document.getElementById('sanadBtn');
+    const sanadModal = document.getElementById('sanadModal');
+    const closeModal = document.getElementById('closeModal');
+    const sendSanadReq = document.getElementById('sendSanadReq');
 
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) {
-        showAlert('يرجى ملء جميع الحقول المطلوب!', 'error');
-        return;
-      }
-
-      // محاكاة للتحقق من البيانات (مثال تجريبي)
-      if (username === "admin" && password === "123456") {
-        showAlert('تم تسجيل الدخول بنجاح! جاري التوجيه...', 'success');
-      } else {
-        showAlert('اسم المستخدم أو كلمة المرور غير صحيحة.', 'error');
-      }
+    // فتح نافذة سند
+    sanadBtn.addEventListener('click', () => {
+      sanadModal.style.display = 'flex';
     });
 
-    function showAlert(message, type) {
-      alertBox.textContent = message;
-      alertBox.className = `alert ${type}`;
-      alertBox.style.display = 'block';
-    }
+    // إغلاق النافذة
+    closeModal.addEventListener('click', () => {
+      sanadModal.style.display = 'none';
+    });
+
+    // محاكاة إرسال طلب التصديق
+    sendSanadReq.addEventListener('click', () => {
+      const natId = document.getElementById('nationalId').value.trim();
+      if (!natId) {
+        alert('يرجى إدخال الرقم الوطني');
+        return;
+      }
+      sendSanadReq.textContent = 'جاري إرسال الإشعار إلى تطبيق سند...';
+      sendSanadReq.disabled = true;
+
+      setTimeout(() => {
+        alert('تم إرسال طلب الإشعار إلى تطبيق سند! يرجى فتح التطبيق لتأكيد الهوية.');
+        sanadModal.style.display = 'none';
+        sendSanadReq.textContent = 'إرسال طلب التأكيد';
+        sendSanadReq.disabled = false;
+      }, 1500);
+    });
   </script>
 
 </body>
