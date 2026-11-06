@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00f2fe;
+      --secondary: #4facfe;
+      --bg-dark: #090d16;
+      --card-bg: rgba(18, 26, 43, 0.65);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --error: #ef4444;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* خلفية متدرجة مع أشكال مضيئة متحركة */
+    .bg-glowing-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .shape {
+      position: absolute;
+      filter: blur(90px);
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: float 10s infinite alternate ease-in-out;
+    }
+
+    .shape-1 {
+      width: 320px;
+      height: 320px;
+      background: #00f2fe;
+      top: -50px;
+      right: -50px;
+    }
+
+    .shape-2 {
+      width: 380px;
+      height: 380px;
+      background: #7f00ff;
+      bottom: -80px;
+      left: -80px;
+      animation-delay: -5s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 40px) scale(1.1); }
+    }
+
+    /* كارت تسجيل الدخول الزجاجي */
+    .login-container {
+      position: relative;
+      z-index: 1;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-header h2 {
+      color: var(--text-main);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .login-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(10, 15, 28, 0.7);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .toggle-password {
+      position: absolute;
+      left: 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .toggle-password:hover {
+      color: var(--primary);
+    }
+
+    /* زر السريع للتجربة */
+    .demo-hint {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+
+    .demo-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 0.85rem;
+    }
+
+    /* زر الدخول */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      border: none;
+      border-radius: 12px;
+      color: #040914;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 242, 254, 0.3);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(0, 242, 254, 0.45);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* تنبيه الرسائل */
+    .alert-box {
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .alert-box.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .alert-box.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    /* أنيميشن الاهتزاز عند الخطأ */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* سبينر التحميل */
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(4, 9, 20, 0.3);
+      border-radius: 50%;
+      border-top-color: #040914;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glowing-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+
+  <div class="login-container" id="loginCard">
+    <div class="login-header">
+      <h2>مرحباً بك</h2>
+      <p>قم بتسجيل الدخول للوصول إلى حسابك</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">اسم المستخدم</label>
+        <div class="input-wrapper">
+          <input type="text" id="username" placeholder="أدخل اسم المستخدم..." autocomplete="off">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <div class="input-wrapper">
+          <input type="password" id="password" placeholder="أدخل كلمة المرور...">
+          <button type="button" class="toggle-password" id="togglePassword">
+            <svg id="eyeIcon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="demo-hint">
+        <span style="color: var(--text-muted);">بيانات تجريبية؟</span>
+        <button type="button" class="demo-btn" id="fillDemo">تعبئة تلقائية (admin)</button>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span class="spinner" id="spinner"></span>
+        <span id="btnText">تسجيل الدخول</span>
+      </button>
+    </form>
+
+    <div id="alertBox" class="alert-box"></div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginCard = document.getElementById('loginCard');
+    const alertBox = document.getElementById('alertBox');
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    const fillDemoBtn = document.getElementById('fillDemo');
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+
+    // إظهار / إخفاء كلمة المرور
+    togglePassword.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      
+      togglePassword.innerHTML = isPassword 
+        ? `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+           </svg>`
+        : `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+           </svg>`;
+    });
+
+    // تعبئة البيانات التجريبية
+    fillDemoBtn.addEventListener('click', () => {
+      document.getElementById('username').value = 'admin';
+      document.getElementById('password').value = '123456';
+    });
+
+    // معالجة النموذج
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        showError('يرجى ملء جميع الحقول المطلوبة');
+        return;
+      }
+
+      // محاكاة الاتصال والتحقق
+      setLoading(true);
+      
+      setTimeout(() => {
+        setLoading(false);
+        if (username === "admin" && password === "123456") {
+          showSuccess('تم تسجيل الدخول بنجاح! جاري التوجيه...');
+        } else {
+          showError('اسم المستخدم أو كلمة المرور غير صحيحة');
+        }
+      }, 1000);
+    });
+
+    function setLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      spinner.style.display = isLoading ? 'block' : 'none';
+      btnText.textContent = isLoading ? 'جاري التحقق...' : 'تسجيل الدخول';
+    }
+
+    function showError(msg) {
+      alertBox.textContent = msg;
+      alertBox.className = 'alert-box error';
+      alertBox.style.display = 'block';
+      
+      loginCard.classList.remove('shake');
+      void loginCard.offsetWidth; // Trigger reflow
+      loginCard.classList.add('shake');
+    }
+
+    function showSuccess(msg) {
+      alertBox.textContent = msg;
+      alertBox.className = 'alert-box success';
+      alertBox.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
